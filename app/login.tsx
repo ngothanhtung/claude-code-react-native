@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 import { PurpleTheme } from '@/constants/Purple';
@@ -53,9 +53,7 @@ export default function LoginScreen() {
   const keepSignedIn = watch('keepSignedIn');
 
   function onSubmit(data: LoginForm) {
-    const isValid =
-      data.email.trim().toLowerCase() === MOCK_EMAIL &&
-      data.password === MOCK_PASSWORD;
+    const isValid = data.email.trim().toLowerCase() === MOCK_EMAIL && data.password === MOCK_PASSWORD;
 
     if (!isValid) {
       setAuthError('Email hoặc mật khẩu không đúng.');
@@ -70,35 +68,23 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <View style={styles.decorCircle} />
 
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps='handled'>
         <View style={styles.logoRow}>
           <View style={styles.logoMark}>
-            <Ionicons name="checkmark" size={18} color="#fff" />
+            <Ionicons name='checkmark' size={18} color='#fff' />
           </View>
-          <Text style={styles.logoText}>Fieldnote</Text>
+          <Text style={styles.logoText}>TaskFlow</Text>
         </View>
 
         <Text style={styles.heading}>Sign in to your workspace</Text>
-        <Text style={styles.subheading}>
-          Studio North · 5 members. Use your work email or single sign-on.
-        </Text>
+        <Text style={styles.subheading}>Studio North · 5 members. Use your work email or single sign-on.</Text>
 
         <View style={styles.field}>
           <Text style={styles.fieldLabel}>EMAIL</Text>
           <Controller
             control={control}
-            name="email"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.fieldInput}
-                value={value}
-                onChangeText={onChange}
-                placeholder="you@studionorth.co"
-                placeholderTextColor={COLORS.gray}
-                autoCapitalize="none"
-                keyboardType="email-address"
-              />
-            )}
+            name='email'
+            render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='you@studionorth.co' placeholderTextColor={COLORS.gray} autoCapitalize='none' keyboardType='email-address' />}
           />
         </View>
 
@@ -111,28 +97,14 @@ export default function LoginScreen() {
           </View>
           <Controller
             control={control}
-            name="password"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.fieldInput}
-                value={value}
-                onChangeText={onChange}
-                placeholder="Enter your password"
-                placeholderTextColor={COLORS.gray}
-                secureTextEntry={!showPassword}
-              />
-            )}
+            name='password'
+            render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='Enter your password' placeholderTextColor={COLORS.gray} secureTextEntry={!showPassword} />}
           />
         </View>
 
         <View style={styles.optionsRow}>
-          <Pressable
-            style={styles.checkboxRow}
-            onPress={() => setValue('keepSignedIn', !keepSignedIn)}
-            hitSlop={8}>
-            <View style={[styles.checkbox, keepSignedIn && styles.checkboxChecked]}>
-              {keepSignedIn && <Ionicons name="checkmark" size={14} color="#fff" />}
-            </View>
+          <Pressable style={styles.checkboxRow} onPress={() => setValue('keepSignedIn', !keepSignedIn)} hitSlop={8}>
+            <View style={[styles.checkbox, keepSignedIn && styles.checkboxChecked]}>{keepSignedIn && <Ionicons name='checkmark' size={14} color='#fff' />}</View>
             <Text style={styles.checkboxLabel}>Keep me signed in</Text>
           </Pressable>
           <Pressable hitSlop={8}>
@@ -155,12 +127,7 @@ export default function LoginScreen() {
         </View>
 
         <Pressable style={styles.ssoButton}>
-          <Ionicons
-            name="lock-closed-outline"
-            size={18}
-            color={COLORS.primary}
-            style={styles.ssoIcon}
-          />
+          <Ionicons name='lock-closed-outline' size={18} color={COLORS.primary} style={styles.ssoIcon} />
           <Text style={styles.ssoText}>Continue with SSO</Text>
         </Pressable>
 

@@ -1,16 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useRef, useState } from 'react';
-import {
-  Animated,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  useWindowDimensions,
-} from 'react-native';
+import { Animated, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Text, View } from '@/components/Themed';
@@ -30,18 +22,15 @@ const COLORS = {
 const SLIDES = [
   {
     title: 'Capture first.\nOrganize later.',
-    description:
-      'One tap from anywhere to drop a task in. Fieldnote sorts it into the right project when you’re ready.',
+    description: 'One tap from anywhere to drop a task in. TaskFlow sorts it into the right project when you’re ready.',
   },
   {
     title: 'Know what’s\nnext by 9am.',
-    description:
-      'Today pulls the work that’s due, blocked or waiting on you and puts it in order.',
+    description: 'Today pulls the work that’s due, blocked or waiting on you and puts it in order.',
   },
   {
     title: 'Hand off\nwithout a call.',
-    description:
-      'Assign, reassign and see who’s overloaded. Everyone on the team sees the same list.',
+    description: 'Assign, reassign and see who’s overloaded. Everyone on the team sees the same list.',
   },
 ];
 
@@ -56,7 +45,7 @@ function Brand() {
       <View style={styles.brandMark}>
         <Text style={styles.checkmark}>✓</Text>
       </View>
-      <Text style={styles.brandName}>Fieldnote</Text>
+      <Text style={styles.brandName}>TaskFlow</Text>
     </View>
   );
 }
@@ -85,16 +74,9 @@ function Slide({ slide, index, width, scrollX }: SlideProps) {
 
   return (
     <View style={[styles.slide, { width }]}>
-      <Animated.View
-        style={[
-          styles.content,
-          { opacity, transform: [{ translateY }] },
-        ]}
-      >
+      <Animated.View style={[styles.content, { opacity, transform: [{ translateY }] }]}>
         <Animated.Text style={styles.title}>{slide.title}</Animated.Text>
-        <Animated.Text style={styles.description}>
-          {slide.description}
-        </Animated.Text>
+        <Animated.Text style={styles.description}>{slide.description}</Animated.Text>
       </Animated.View>
     </View>
   );
@@ -175,7 +157,7 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <StatusBar style="dark" />
+      <StatusBar style='dark' />
       <View style={styles.backgroundOrb} />
 
       <Brand />
@@ -187,59 +169,29 @@ export default function OnboardingScreen() {
         bounces={false}
         showsHorizontalScrollIndicator={false}
         scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          {
-            useNativeDriver: true,
-            listener: handleDotProgress,
-          }
-        )}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+          useNativeDriver: true,
+          listener: handleDotProgress,
+        })}
         onMomentumScrollEnd={handleScroll}
       >
         {SLIDES.map((slide, slideIndex) => (
-          <Slide
-            key={slide.title}
-            slide={slide}
-            index={slideIndex}
-            width={width}
-            scrollX={scrollX}
-          />
+          <Slide key={slide.title} slide={slide} index={slideIndex} width={width} scrollX={scrollX} />
         ))}
       </AnimatedScrollView>
 
       <View style={styles.footer}>
-        <View
-          style={styles.indicators}
-          accessibilityLabel={`Trang ${index + 1} trên ${SLIDES.length}`}
-        >
+        <View style={styles.indicators} accessibilityLabel={`Trang ${index + 1} trên ${SLIDES.length}`}>
           {SLIDES.map((_, dotIndex) => (
-            <Dot
-              key={dotIndex}
-              index={dotIndex}
-              width={width}
-              dotProgress={dotProgress}
-            />
+            <Dot key={dotIndex} index={dotIndex} width={width} dotProgress={dotProgress} />
           ))}
         </View>
 
-        <Pressable
-          accessibilityRole="button"
-          style={({ pressed }) => [
-            styles.button,
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={goToNext}
-        >
-          <Text style={styles.buttonText}>
-            {isLastSlide ? 'Get started' : 'Continue'}
-          </Text>
+        <Pressable accessibilityRole='button' style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]} onPress={goToNext}>
+          <Text style={styles.buttonText}>{isLastSlide ? 'Get started' : 'Continue'}</Text>
         </Pressable>
 
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => void completeOnboarding()}
-          hitSlop={12}
-        >
+        <Pressable accessibilityRole='button' onPress={() => void completeOnboarding()} hitSlop={12}>
           <Text style={styles.skipText}>Skip intro</Text>
         </Pressable>
       </View>
