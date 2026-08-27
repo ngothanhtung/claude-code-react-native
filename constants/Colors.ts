@@ -1,5 +1,7 @@
-const tintColorLight = '#2f95dc';
-const tintColorDark = '#fff';
+import Purple from './Purple';
+
+const tintColorLight = Purple.purpleViolet;
+const tintColorDark = Purple.lilacPurple;
 
 export default {
   light: {

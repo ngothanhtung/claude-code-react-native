@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "claude-code-react-native",
-    "slug": "claude-code-react-native",
+    "name": "taskflow",
+    "slug": "taskflow",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "claudecodereactnative",
+    "scheme": "taskflow",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
@@ -33,7 +33,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
