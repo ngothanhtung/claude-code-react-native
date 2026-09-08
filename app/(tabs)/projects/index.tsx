@@ -1,6 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { PROJECTS, Project } from '@/constants/Projects';
 import { PurpleTheme } from '@/constants/Purple';
 
 const COLORS = {
@@ -12,75 +15,11 @@ const COLORS = {
   track: '#EEF0F5',
 };
 
-type Project = {
-  id: string;
-  name: string;
-  dotColor: string;
-  barColor: string;
-  done: number;
-  total: number;
-  due: string;
-  members: { initials: string; color: string }[];
-};
-
-const PROJECTS: Project[] = [
-  {
-    id: '1',
-    name: 'Mobile app v2',
-    dotColor: COLORS.primary,
-    barColor: COLORS.primary,
-    done: 6,
-    total: 14,
-    due: 'Ships 3 Sep',
-    members: [
-      { initials: 'AM', color: COLORS.primary },
-      { initials: 'JC', color: '#1FA97D' },
-      { initials: 'RK', color: '#D9552F' },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Brand refresh',
-    dotColor: '#1FA97D',
-    barColor: '#1FA97D',
-    done: 7,
-    total: 9,
-    due: 'Review Thu',
-    members: [
-      { initials: 'TP', color: '#2F8FE0' },
-      { initials: 'AM', color: COLORS.primary },
-    ],
-  },
-  {
-    id: '3',
-    name: 'Q3 planning',
-    dotColor: '#D9552F',
-    barColor: '#D9552F',
-    done: 1,
-    total: 6,
-    due: 'Draft due Fri',
-    members: [
-      { initials: 'AM', color: COLORS.primary },
-      { initials: 'SB', color: COLORS.primary },
-    ],
-  },
-  {
-    id: '4',
-    name: 'Ops & admin',
-    dotColor: '#3B82F6',
-    barColor: '#3B82F6',
-    done: 8,
-    total: 11,
-    due: 'Recurring',
-    members: [{ initials: 'SB', color: COLORS.primary }],
-  },
-];
-
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({ project, onPress }: { project: Project; onPress: () => void }) {
   const progress = project.done / project.total;
 
   return (
-    <View style={styles.card}>
+    <Pressable style={styles.card} onPress={onPress}>
       <View style={styles.cardHeader}>
         <View style={[styles.dot, { backgroundColor: project.dotColor }]} />
         <Text style={styles.cardTitle}>{project.name}</Text>
@@ -113,27 +52,33 @@ function ProjectCard({ project }: { project: Project }) {
         </View>
         <Text style={styles.dueText}>{project.due}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
 export default function ProjectsScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Projects</Text>
-        <Pressable hitSlop={8}>
-          <Text style={styles.teamLink}>Team</Text>
-        </Pressable>
-      </View>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Projects</Text>
+          <Pressable hitSlop={8}>
+            <Text style={styles.teamLink}>Team</Text>
+          </Pressable>
+        </View>
 
-      <FlatList
-        data={PROJECTS}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => <ProjectCard project={item} />}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-      />
+        <FlatList
+          data={PROJECTS}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => (
+            <ProjectCard project={item} onPress={() => router.push(`/projects/${item.id}`)} />
+          )}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+        />
+      </SafeAreaView>
 
       <Pressable style={styles.fab} hitSlop={8}>
         <Ionicons name="add" size={28} color="#fff" />
@@ -146,6 +91,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bg,
+  },
+  safeArea: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',

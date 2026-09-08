@@ -66,7 +66,7 @@ export default function SignUpScreen() {
   const watchedUsername = watch('username');
 
   function onSubmit(_data: SignUpForm) {
-    router.replace('/(tabs)');
+    router.replace('/home/today');
   }
 
   const emailTaken =

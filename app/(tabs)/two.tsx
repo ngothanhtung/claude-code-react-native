@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PurpleTheme } from '@/constants/Purple';
@@ -19,6 +19,7 @@ type InboxItem = {
   title: string;
   captured: string;
   source: string;
+  read: boolean;
 };
 
 const INBOX_ITEMS: InboxItem[] = [
@@ -27,27 +28,73 @@ const INBOX_ITEMS: InboxItem[] = [
     title: 'Ask Jo about the motion spec',
     captured: 'Captured 8:12',
     source: 'voice note',
+    read: false,
   },
   {
     id: '2',
     title: 'Look into the duplicate-task bug on Android',
     captured: 'Captured yesterday',
     source: 'shared from Slack',
+    read: false,
   },
   {
     id: '3',
     title: 'Book the offsite room for September',
     captured: 'Captured yesterday',
     source: '',
+    read: true,
   },
 ];
 
-function InboxRow({ item, onResolve }: { item: InboxItem; onResolve: (id: string) => void }) {
+type InboxFilter = 'all' | 'read' | 'unread';
+
+const TOP_TABS: { key: InboxFilter; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'read', label: 'Read' },
+  { key: 'unread', label: 'Unread' },
+];
+
+function TopTabBar({
+  active,
+  onChange,
+}: {
+  active: InboxFilter;
+  onChange: (filter: InboxFilter) => void;
+}) {
+  return (
+    <View style={styles.topTabBar}>
+      {TOP_TABS.map((tab) => (
+        <Pressable
+          key={tab.key}
+          style={styles.topTab}
+          onPress={() => onChange(tab.key)}>
+          <Text style={[styles.topTabText, active === tab.key && styles.topTabTextActive]}>
+            {tab.label}
+          </Text>
+          <View style={[styles.topTabIndicator, active === tab.key && styles.topTabIndicatorActive]} />
+        </Pressable>
+      ))}
+    </View>
+  );
+}
+
+function InboxRow({
+  item,
+  onResolve,
+  onToggleRead,
+}: {
+  item: InboxItem;
+  onResolve: (id: string) => void;
+  onToggleRead: (id: string) => void;
+}) {
   return (
     <View style={styles.card}>
-      <Text style={styles.cardTitle} numberOfLines={2}>
-        {item.title}
-      </Text>
+      <View style={styles.cardTitleRow}>
+        {!item.read && <View style={styles.unreadDot} />}
+        <Text style={styles.cardTitle} numberOfLines={2}>
+          {item.title}
+        </Text>
+      </View>
       <Text style={styles.cardMeta}>
         {item.captured}
         {item.source ? ` · ${item.source}` : ''}
@@ -62,6 +109,9 @@ function InboxRow({ item, onResolve }: { item: InboxItem; onResolve: (id: string
         <Pressable style={styles.pill} onPress={() => onResolve(item.id)}>
           <Text style={styles.pillText}>Project</Text>
         </Pressable>
+        <Pressable style={styles.pill} onPress={() => onToggleRead(item.id)}>
+          <Text style={styles.pillText}>{item.read ? 'Mark unread' : 'Mark read'}</Text>
+        </Pressable>
         <Pressable style={styles.pill} onPress={() => onResolve(item.id)}>
           <Text style={styles.pillText}>Delete</Text>
         </Pressable>
@@ -72,9 +122,22 @@ function InboxRow({ item, onResolve }: { item: InboxItem; onResolve: (id: string
 
 export default function InboxScreen() {
   const [items, setItems] = useState(INBOX_ITEMS);
+  const [filter, setFilter] = useState<InboxFilter>('all');
+
+  const filteredItems = useMemo(() => {
+    if (filter === 'read') return items.filter((item) => item.read);
+    if (filter === 'unread') return items.filter((item) => !item.read);
+    return items;
+  }, [items, filter]);
 
   function resolveItem(id: string) {
     setItems((prev) => prev.filter((item) => item.id !== id));
+  }
+
+  function toggleRead(id: string) {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, read: !item.read } : item))
+    );
   }
 
   return (
@@ -86,11 +149,15 @@ export default function InboxScreen() {
         </Text>
       </View>
 
+      <TopTabBar active={filter} onChange={setFilter} />
+
       <FlatList
-        data={items}
+        data={filteredItems}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => <InboxRow item={item} onResolve={resolveItem} />}
+        renderItem={({ item }) => (
+          <InboxRow item={item} onResolve={resolveItem} onToggleRead={toggleRead} />
+        )}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       />
 
@@ -121,6 +188,34 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: COLORS.gray,
   },
+  topTabBar: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E4E6EE',
+    marginBottom: 16,
+  },
+  topTab: {
+    marginRight: 24,
+    paddingBottom: 10,
+  },
+  topTabText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.gray,
+  },
+  topTabTextActive: {
+    color: COLORS.primary,
+  },
+  topTabIndicator: {
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: 'transparent',
+    marginTop: 10,
+  },
+  topTabIndicatorActive: {
+    backgroundColor: COLORS.primary,
+  },
   listContent: {
     paddingHorizontal: 20,
     paddingBottom: 100,
@@ -130,11 +225,24 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
   },
+  cardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 6,
+  },
+  unreadDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.primary,
+    marginTop: 6,
+    marginRight: 8,
+  },
   cardTitle: {
+    flex: 1,
     fontSize: 17,
     fontWeight: '700',
     color: COLORS.dark,
-    marginBottom: 6,
   },
   cardMeta: {
     fontSize: 13,

@@ -8,7 +8,7 @@ export default function TabLayout() {
 
   return (
     <NativeTabs tintColor={Colors[colorScheme].tint}>
-      <NativeTabs.Trigger name="index">
+      <NativeTabs.Trigger name="home">
         <NativeTabs.Trigger.Label>Today</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="calendar" md="today" />
       </NativeTabs.Trigger>

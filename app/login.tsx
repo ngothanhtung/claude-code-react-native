@@ -61,7 +61,7 @@ export default function LoginScreen() {
     }
 
     setAuthError('');
-    router.replace('/(tabs)');
+    router.replace('/home/today');
   }
 
   return (
@@ -134,7 +134,7 @@ export default function LoginScreen() {
         <View style={styles.footerRow}>
           <Text style={styles.footerText}>No account yet? </Text>
           <Pressable onPress={() => router.replace('/signup')}>
-            <Text style={styles.footerLink}>Request access</Text>
+            <Text style={styles.footerLink}>Sign up</Text>
           </Pressable>
         </View>
       </ScrollView>
