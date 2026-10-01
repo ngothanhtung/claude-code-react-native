@@ -79,27 +79,33 @@ export default function LoginScreen() {
         <Text style={styles.heading}>Sign in to your workspace</Text>
         <Text style={styles.subheading}>Studio North · 5 members. Use your work email or single sign-on.</Text>
 
-        <View style={styles.field}>
-          <Text style={styles.fieldLabel}>EMAIL</Text>
-          <Controller
-            control={control}
-            name='email'
-            render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='you@studionorth.co' placeholderTextColor={COLORS.gray} autoCapitalize='none' keyboardType='email-address' />}
-          />
+        <View style={styles.fieldGroup}>
+          <View style={styles.field}>
+            <Text style={styles.fieldLabel}>EMAIL</Text>
+            <Controller
+              control={control}
+              name='email'
+              render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='you@studionorth.co' placeholderTextColor={COLORS.gray} autoCapitalize='none' keyboardType='email-address' />}
+            />
+          </View>
+          {errors.email ? <Text style={styles.fieldError}>{errors.email.message}</Text> : null}
         </View>
 
-        <View style={styles.field}>
-          <View style={styles.fieldHeaderRow}>
-            <Text style={styles.fieldLabel}>PASSWORD</Text>
-            <Pressable onPress={() => setShowPassword((prev) => !prev)} hitSlop={8}>
-              <Text style={styles.showLink}>{showPassword ? 'Hide' : 'Show'}</Text>
-            </Pressable>
+        <View style={styles.fieldGroup}>
+          <View style={styles.field}>
+            <View style={styles.fieldHeaderRow}>
+              <Text style={styles.fieldLabel}>PASSWORD</Text>
+              <Pressable onPress={() => setShowPassword((prev) => !prev)} hitSlop={8}>
+                <Text style={styles.showLink}>{showPassword ? 'Hide' : 'Show'}</Text>
+              </Pressable>
+            </View>
+            <Controller
+              control={control}
+              name='password'
+              render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='Enter your password' placeholderTextColor={COLORS.gray} secureTextEntry={!showPassword} />}
+            />
           </View>
-          <Controller
-            control={control}
-            name='password'
-            render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='Enter your password' placeholderTextColor={COLORS.gray} secureTextEntry={!showPassword} />}
-          />
+          {errors.password ? <Text style={styles.fieldError}>{errors.password.message}</Text> : null}
         </View>
 
         <View style={styles.optionsRow}>
@@ -113,8 +119,6 @@ export default function LoginScreen() {
         </View>
 
         {authError ? <Text style={styles.errorText}>{authError}</Text> : null}
-        {errors.email ? <Text style={styles.errorText}>{errors.email.message}</Text> : null}
-        {errors.password ? <Text style={styles.errorText}>{errors.password.message}</Text> : null}
 
         <Pressable style={styles.signInButton} onPress={handleSubmit(onSubmit)}>
           <Text style={styles.signInText}>Sign in</Text>
@@ -193,12 +197,21 @@ const styles = StyleSheet.create({
     color: COLORS.gray,
     marginBottom: 32,
   },
+  fieldGroup: {
+    marginBottom: 16,
+  },
   field: {
     backgroundColor: COLORS.card,
     borderRadius: 16,
     paddingHorizontal: 18,
     paddingVertical: 12,
-    marginBottom: 16,
+  },
+  fieldError: {
+    ...Inter.body,
+    fontSize: 13,
+    color: COLORS.error,
+    marginTop: 6,
+    marginLeft: 18,
   },
   fieldHeaderRow: {
     flexDirection: 'row',
