@@ -1,30 +1,23 @@
-import { Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { z } from 'zod';
 
+import { PurpleTheme } from '@/constants/Purple';
 import { Inter } from '@/constants/Typography';
 
 const COLORS = {
-  primary: '#F4693F',
-  dark: '#151A2E',
-  gray: '#8891A5',
-  fieldBg: '#F5F6F8',
-  facebook: '#0A54B8',
+  bg: '#F4F1FB',
+  decor: '#E7DFF7',
+  card: '#FFFFFF',
+  dark: '#1C1730',
+  gray: '#8B87A0',
+  border: '#E7E3F2',
+  primary: PurpleTheme.primary,
   error: '#E0483E',
-  errorBg: '#FDF1F0',
-  success: '#3DBB63',
 };
 
 // Simulates an email that's already registered (matches the login mock user).
@@ -50,7 +43,6 @@ export default function SignUpScreen() {
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
@@ -61,271 +53,241 @@ export default function SignUpScreen() {
     },
   });
 
-  const watchedEmail = watch('email');
-  const watchedPassword = watch('password');
-  const watchedUsername = watch('username');
-
   function onSubmit(_data: SignUpForm) {
     router.replace('/home/today');
   }
 
-  const emailTaken =
-    watchedEmail.trim().toLowerCase() === EXISTING_EMAIL && watchedEmail.length > 0;
-  const emailValid =
-    watchedEmail.trim().length > 0 && !emailTaken && !errors.email;
-  const passwordInvalid =
-    watchedPassword.length > 0 && watchedPassword.length !== 9;
-  const passwordValid = watchedPassword.length === 9;
-  const usernameValid = watchedUsername.trim().length >= 2;
-
   return (
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Image
-        source={require('@/assets/images/eatme-logo.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+    <View style={styles.container}>
+      <View style={styles.decorCircle} />
 
-      <Text style={styles.heading}>Getting Started</Text>
-      <Text style={styles.subheading}>Create an account to continue!</Text>
-
-      <View style={styles.field}>
-        <View style={styles.labelRow}>
-          <Text style={styles.label}>Email</Text>
-          {emailTaken ? (
-            <Text style={styles.errorText}>This email is already taken</Text>
-          ) : null}
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps='handled'>
+        <View style={styles.logoRow}>
+          <View style={styles.logoMark}>
+            <Ionicons name='checkmark' size={18} color='#fff' />
+          </View>
+          <Text style={styles.logoText}>TaskFlow</Text>
         </View>
-        <View style={[styles.inputWrapper, emailTaken && styles.inputWrapperError]}>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                placeholder="Enter your email"
-                placeholderTextColor={COLORS.gray}
-                autoCapitalize="none"
-                keyboardType="email-address"
-              />
-            )}
-          />
-          <Ionicons
-            name={
-              emailTaken
-                ? 'close-circle'
-                : emailValid
-                ? 'checkmark-circle'
-                : 'checkmark-circle-outline'
-            }
-            size={22}
-            color={emailTaken ? COLORS.error : emailValid ? COLORS.success : COLORS.gray}
-          />
+
+        <Text style={styles.heading}>Create your account</Text>
+        <Text style={styles.subheading}>Join your team's workspace. It only takes a minute.</Text>
+
+        <View style={styles.fieldGroup}>
+          <View style={styles.field}>
+            <Text style={styles.fieldLabel}>EMAIL</Text>
+            <Controller
+              control={control}
+              name='email'
+              render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='you@studionorth.co' placeholderTextColor={COLORS.gray} autoCapitalize='none' keyboardType='email-address' />}
+            />
+          </View>
+          {errors.email ? <Text style={styles.fieldError}>{errors.email.message}</Text> : null}
         </View>
-      </View>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>Username</Text>
-        <View style={styles.inputWrapper}>
-          <Controller
-            control={control}
-            name="username"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                placeholder="Enter your username"
-                placeholderTextColor={COLORS.gray}
-                autoCapitalize="words"
-              />
-            )}
-          />
-          {usernameValid ? (
-            <Ionicons name="checkmark-circle" size={22} color={COLORS.success} />
-          ) : (
-            <Ionicons name="checkmark-circle-outline" size={22} color={COLORS.gray} />
-          )}
+        <View style={styles.fieldGroup}>
+          <View style={styles.field}>
+            <Text style={styles.fieldLabel}>USERNAME</Text>
+            <Controller
+              control={control}
+              name='username'
+              render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='Enter your username' placeholderTextColor={COLORS.gray} autoCapitalize='words' />}
+            />
+          </View>
+          {errors.username ? <Text style={styles.fieldError}>{errors.username.message}</Text> : null}
         </View>
-      </View>
 
-      <View style={styles.field}>
-        <View style={styles.labelRow}>
-          <Text style={styles.label}>Password</Text>
-          {passwordInvalid ? (
-            <Text style={styles.errorText}>Password must be 9 characters</Text>
-          ) : null}
+        <View style={styles.fieldGroup}>
+          <View style={styles.field}>
+            <View style={styles.fieldHeaderRow}>
+              <Text style={styles.fieldLabel}>PASSWORD</Text>
+              <Pressable onPress={() => setShowPassword((prev) => !prev)} hitSlop={8}>
+                <Text style={styles.showLink}>{showPassword ? 'Hide' : 'Show'}</Text>
+              </Pressable>
+            </View>
+            <Controller
+              control={control}
+              name='password'
+              render={({ field: { onChange, value } }) => <TextInput style={styles.fieldInput} value={value} onChangeText={onChange} placeholder='Enter your password' placeholderTextColor={COLORS.gray} secureTextEntry={!showPassword} />}
+            />
+          </View>
+          {errors.password ? <Text style={styles.fieldError}>{errors.password.message}</Text> : null}
         </View>
-        <View style={[styles.inputWrapper, passwordInvalid && styles.inputWrapperError]}>
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                placeholder="Enter your password"
-                placeholderTextColor={COLORS.gray}
-                secureTextEntry={!showPassword}
-              />
-            )}
-          />
-          {passwordInvalid ? (
-            <Ionicons name="close-circle" size={22} color={COLORS.error} />
-          ) : (
-            <Pressable onPress={() => setShowPassword((prev) => !prev)} hitSlop={8}>
-              <Ionicons
-                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                size={22}
-                color={passwordValid ? COLORS.success : COLORS.gray}
-              />
-            </Pressable>
-          )}
-        </View>
-      </View>
 
-      <Pressable style={styles.signUpButton} onPress={handleSubmit(onSubmit)}>
-        <Text style={styles.signUpText}>Sign Up</Text>
-      </Pressable>
-
-      <View style={styles.signInRow}>
-        <Text style={styles.optionText}>Already have an account? </Text>
-        <Pressable onPress={() => router.replace('/login')}>
-          <Text style={styles.signInText}>Sign In</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.socialButtons}>
-        <Pressable style={[styles.socialButton, { backgroundColor: COLORS.facebook }]}>
-          <FontAwesome name="facebook" size={20} color="#fff" style={styles.socialIcon} />
-          <Text style={styles.socialTextLight}>Continue With Facebook</Text>
+        <Pressable style={styles.signUpButton} onPress={handleSubmit(onSubmit)}>
+          <Text style={styles.signUpText}>Sign up</Text>
         </Pressable>
 
-        <Pressable style={[styles.socialButton, { backgroundColor: COLORS.fieldBg }]}>
-          <AntDesign name="google" size={20} color="#EA4335" style={styles.socialIcon} />
-          <Text style={styles.socialTextDark}>Continue With Google</Text>
+        <View style={styles.dividerRow}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>OR</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        <Pressable style={styles.socialButton}>
+          <AntDesign name='google' size={18} color='#EA4335' style={styles.socialIcon} />
+          <Text style={styles.socialText}>Continue with Google</Text>
         </Pressable>
-      </View>
-    </ScrollView>
+
+        <Pressable style={styles.socialButton}>
+          <FontAwesome name='facebook' size={18} color='#0A54B8' style={styles.socialIcon} />
+          <Text style={styles.socialText}>Continue with Facebook</Text>
+        </Pressable>
+
+        <View style={styles.footerRow}>
+          <Text style={styles.footerText}>Already have an account? </Text>
+          <Pressable onPress={() => router.replace('/login')}>
+            <Text style={styles.footerLink}>Sign in</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: COLORS.bg,
+  },
+  decorCircle: {
+    position: 'absolute',
+    top: -80,
+    right: -100,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: COLORS.decor,
+  },
+  scroll: {
     flexGrow: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 24,
-    paddingTop: 80,
+    paddingTop: 72,
     paddingBottom: 40,
   },
-  logo: {
-    width: 220,
-    height: 72,
-    alignSelf: 'center',
-    marginBottom: 32,
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 48,
+  },
+  logoMark: {
+    width: 32,
+    height: 32,
+    borderRadius: 9,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  logoText: {
+    fontFamily: 'BeVietnamPro_700Bold',
+    fontSize: 19,
+    color: COLORS.dark,
   },
   heading: {
     fontFamily: 'BeVietnamPro_700Bold',
-    fontSize: 26,
+    fontSize: 32,
+    lineHeight: 38,
     color: COLORS.dark,
-    textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   subheading: {
     ...Inter.body,
     color: COLORS.gray,
-    textAlign: 'center',
     marginBottom: 32,
   },
-  field: {
-    marginBottom: 20,
+  fieldGroup: {
+    marginBottom: 16,
   },
-  labelRow: {
+  field: {
+    backgroundColor: COLORS.card,
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+  },
+  fieldError: {
+    ...Inter.body,
+    fontSize: 13,
+    color: COLORS.error,
+    marginTop: 6,
+    marginLeft: 18,
+  },
+  fieldHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
   },
-  label: {
+  fieldLabel: {
     ...Inter.label,
-    fontSize: 13,
-    textTransform: 'none' as const,
     color: COLORS.gray,
-    marginBottom: 8,
+    marginBottom: 6,
   },
-  errorText: {
-    ...Inter.caption,
-    fontFamily: 'Inter_500Medium',
-    color: COLORS.error,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.fieldBg,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'transparent',
-    paddingHorizontal: 16,
-    height: 56,
-  },
-  inputWrapperError: {
-    backgroundColor: COLORS.errorBg,
-    borderColor: COLORS.error,
-  },
-  input: {
-    flex: 1,
-    ...Inter.body,
+  fieldInput: {
+    ...Inter.input,
     color: COLORS.dark,
+    padding: 0,
+  },
+  showLink: {
+    ...Inter.link,
+    color: COLORS.primary,
   },
   signUpButton: {
     backgroundColor: COLORS.primary,
-    borderRadius: 12,
-    height: 56,
+    borderRadius: 30,
+    height: 58,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 4,
-    marginBottom: 20,
+    marginTop: 24,
+    marginBottom: 40,
   },
   signUpText: {
     ...Inter.button,
     color: '#fff',
   },
-  signInRow: {
+  dividerRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 40,
   },
-  optionText: {
-    ...Inter.body,
-    fontSize: 14,
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: COLORS.border,
+  },
+  dividerText: {
+    ...Inter.label,
     color: COLORS.gray,
-  },
-  signInText: {
-    ...Inter.link,
-    color: COLORS.primary,
-  },
-  socialButtons: {
-    gap: 16,
+    marginHorizontal: 12,
   },
   socialButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 12,
+    backgroundColor: COLORS.card,
+    borderRadius: 30,
     height: 56,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginBottom: 16,
   },
   socialIcon: {
-    marginRight: 12,
+    marginRight: 10,
   },
-  socialTextLight: {
-    ...Inter.bodyMedium,
-    color: '#fff',
-  },
-  socialTextDark: {
+  socialText: {
     ...Inter.bodyMedium,
     color: COLORS.dark,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 12,
+  },
+  footerText: {
+    ...Inter.body,
+    fontSize: 14,
+    color: COLORS.gray,
+  },
+  footerLink: {
+    ...Inter.link,
+    color: COLORS.primary,
   },
 });

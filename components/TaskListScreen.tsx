@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import SideMenu from '@/components/SideMenu';
 import TaskCard from '@/components/TaskCard';
+import TaskDetailModal from '@/components/TaskDetailModal';
 import { useTasks } from '@/components/TasksProvider';
 import { Task } from '@/constants/Tasks';
 import { PurpleTheme } from '@/constants/Purple';
@@ -30,7 +31,9 @@ export default function TaskListScreen({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { tasks, toggleTask } = useTasks();
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const filteredTasks = tasks.filter(filter);
+  const selectedTask = tasks.find((task) => task.id === selectedTaskId) ?? null;
 
   return (
     <View style={styles.container}>
@@ -49,13 +52,25 @@ export default function TaskListScreen({
           data={filteredTasks}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
-          renderItem={({ item }) => <TaskCard task={item} onToggle={toggleTask} />}
+          renderItem={({ item }) => (
+            <TaskCard
+              task={item}
+              onToggle={toggleTask}
+              onPress={(task) => setSelectedTaskId(task.id)}
+            />
+          )}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           ListEmptyComponent={<Text style={styles.emptyText}>{emptyText}</Text>}
         />
       </SafeAreaView>
 
       <SideMenu visible={menuOpen} onClose={() => setMenuOpen(false)} />
+
+      <TaskDetailModal
+        task={selectedTask}
+        onClose={() => setSelectedTaskId(null)}
+        onToggle={toggleTask}
+      />
     </View>
   );
 }

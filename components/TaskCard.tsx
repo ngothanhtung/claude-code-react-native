@@ -14,12 +14,17 @@ const COLORS = {
 export default function TaskCard({
   task,
   onToggle,
+  onPress,
 }: {
   task: Task;
   onToggle: (id: string) => void;
+  onPress?: (task: Task) => void;
 }) {
   return (
-    <View style={styles.taskCard}>
+    <Pressable
+      style={({ pressed }) => [styles.taskCard, pressed && onPress && styles.taskCardPressed]}
+      onPress={onPress ? () => onPress(task) : undefined}
+      disabled={!onPress}>
       <Pressable
         style={[styles.checkbox, task.done && styles.checkboxDone]}
         onPress={() => onToggle(task.id)}
@@ -53,7 +58,7 @@ export default function TaskCard({
       <View style={[styles.avatar, { backgroundColor: task.avatarColor }]}>
         <Text style={styles.avatarText}>{task.avatarInitials}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -64,6 +69,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.card,
     borderRadius: 16,
     padding: 16,
+  },
+  taskCardPressed: {
+    opacity: 0.7,
   },
   checkbox: {
     width: 26,

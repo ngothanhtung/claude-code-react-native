@@ -66,8 +66,8 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    // TEMP (testing): always show onboarding on launch, ignore the "seen it" flag.
-    router.replace('/onboarding');
+    // TEMP (demo): open the UI/UX components demo screen first on launch.
+    router.replace('/ui-ux-components');
   }, []);
 
   return (
@@ -77,6 +77,7 @@ function RootLayoutNav() {
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="signup" options={{ headerShown: false }} />
+        <Stack.Screen name="ui-ux-components" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>
