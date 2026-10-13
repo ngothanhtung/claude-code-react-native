@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useState } from 'react';
 
@@ -26,6 +26,7 @@ type SettingRow = {
   value?: string;
   toggle?: boolean;
   defaultValue?: boolean;
+  href?: Href;
 };
 
 const STATS = [
@@ -76,6 +77,14 @@ const NOTIFICATION_ROWS: SettingRow[] = [
     iconBg: '#E4F6EF',
     label: 'Haptics on complete',
     toggle: true,
+  },
+  {
+    id: 'test-notifications',
+    icon: 'notifications-outline',
+    iconColor: '#D9552F',
+    iconBg: '#FBEAE3',
+    label: 'Test notifications',
+    href: '/notifications',
   },
 ];
 
@@ -128,7 +137,11 @@ function SettingsSection({ title, rows }: { title: string; rows: SettingRow[] })
       <View style={styles.sectionCard}>
         {rows.map((row, index) => (
           <View key={row.id}>
-            <Pressable style={styles.row} disabled={row.toggle}>
+            <Pressable
+              style={styles.row}
+              disabled={row.toggle}
+              onPress={row.href ? () => router.push(row.href!) : undefined}
+            >
               {row.icon ? (
                 <View style={[styles.rowIcon, { backgroundColor: row.iconBg }]}>
                   <Ionicons name={row.icon} size={18} color={row.iconColor} />

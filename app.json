@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "taskflow",
+    "name": "Task Flow",
     "slug": "taskflow",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,9 +8,18 @@
     "scheme": "taskflow",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "vn.edu.ames.taskflow",
+      "appleTeamId": "XXV9FHTBFY",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"]
+      },
+      "entitlements": {
+        "aps-environment": "development"
+      }
     },
     "android": {
+      "package": "vn.edu.ames.taskflow",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -25,6 +34,12 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -35,7 +50,13 @@
         }
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "color": "#4C1D95"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
